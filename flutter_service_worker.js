@@ -3,9 +3,9 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "assets/AssetManifest.json": "ca6038745df8eb81d146ade2e48c4566",
+  "assets/AssetManifest.json": "30063cd5dfd0171661c5caf19c0df63e",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
-"assets/fonts/MaterialIcons-Regular.otf": "4e6447691c9509f7acdbf8a931a85ca1",
+"assets/fonts/MaterialIcons-Regular.otf": "1288c9e28052e028aba623321f7826ac",
 "assets/lib/images/aranam_logo_caption.png": "12bf2f80d18b4820dfa9b04c240eaeed",
 "assets/lib/images/arangam_logo_text.png": "b24b84e27b426b0dea9433db1ec2ff77",
 "assets/lib/images/guru/1.png": "6f7007c54b67dca2985d042d0bbcca71",
@@ -99,7 +99,7 @@ const RESOURCES = {
 "assets/lib/images/sabha/8.png": "138764e9feb8096681c020555a91166b",
 "assets/lib/images/sabha/9.png": "96c64035a03b25548569614b7b2cd200",
 "assets/lib/images/user.jpg": "9ab3e8a1f74f947ebfc1e56bd92c1c47",
-"assets/NOTICES": "53e2a88e1428a28efe9050de7b709af0",
+"assets/NOTICES": "0af6f24a57994538a244ca337ad715fa",
 "assets/packages/country_calling_code_picker/flags/abw.png": "c57c8193f40cf63b02ddefc21b139738",
 "assets/packages/country_calling_code_picker/flags/afg.png": "0005a1af5f7e362f1a6da1afa4b42474",
 "assets/packages/country_calling_code_picker/flags/ago.png": "0a021aa386233a6a0634012526964713",
@@ -354,14 +354,28 @@ const RESOURCES = {
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "assets/packages/fluttertoast/assets/toastify.css": "a85675050054f179444bc5ad70ffc635",
 "assets/packages/fluttertoast/assets/toastify.js": "e7006a0a033d834ef9414d48db3be6fc",
-"assets.zip": "c510d9b206d1126ec83a6e3e15a90d32",
+"assets/packages/rflutter_alert/assets/images/2.0x/close.png": "abaa692ee4fa94f76ad099a7a437bd4f",
+"assets/packages/rflutter_alert/assets/images/2.0x/icon_error.png": "2da9704815c606109493d8af19999a65",
+"assets/packages/rflutter_alert/assets/images/2.0x/icon_info.png": "612ea65413e042e3df408a8548cefe71",
+"assets/packages/rflutter_alert/assets/images/2.0x/icon_success.png": "7d6abdd1b85e78df76b2837996749a43",
+"assets/packages/rflutter_alert/assets/images/2.0x/icon_warning.png": "e4606e6910d7c48132912eb818e3a55f",
+"assets/packages/rflutter_alert/assets/images/3.0x/close.png": "98d2de9ca72dc92b1c9a2835a7464a8c",
+"assets/packages/rflutter_alert/assets/images/3.0x/icon_error.png": "15ca57e31f94cadd75d8e2b2098239bd",
+"assets/packages/rflutter_alert/assets/images/3.0x/icon_info.png": "e68e8527c1eb78949351a6582469fe55",
+"assets/packages/rflutter_alert/assets/images/3.0x/icon_success.png": "1c04416085cc343b99d1544a723c7e62",
+"assets/packages/rflutter_alert/assets/images/3.0x/icon_warning.png": "e5f369189faa13e7586459afbe4ffab9",
+"assets/packages/rflutter_alert/assets/images/close.png": "13c168d8841fcaba94ee91e8adc3617f",
+"assets/packages/rflutter_alert/assets/images/icon_error.png": "f2b71a724964b51ac26239413e73f787",
+"assets/packages/rflutter_alert/assets/images/icon_info.png": "3f71f68cae4d420cecbf996f37b0763c",
+"assets/packages/rflutter_alert/assets/images/icon_success.png": "8bb472ce3c765f567aa3f28915c1a8f4",
+"assets/packages/rflutter_alert/assets/images/icon_warning.png": "ccfc1396d29de3ac730da38a8ab20098",
 "favicon.png": "21361a0dca43f2a2e6a95243fb7d4719",
 "icons/favicon.png": "21361a0dca43f2a2e6a95243fb7d4719",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
-"index.html": "8c2a4d57d8428586dd750427e7c047e8",
-"/": "8c2a4d57d8428586dd750427e7c047e8",
-"main.dart.js": "420ce8ef64c48588749b3a2b94ae196d",
+"index.html": "fe074fae67d2f0f753b8aee0da97738d",
+"/": "fe074fae67d2f0f753b8aee0da97738d",
+"main.dart.js": "d84d38d0021dbca30bf74d651e8a8386",
 "manifest.json": "eac97fd65cfcd2908b0010db4ee72bd9",
 "version.json": "831276693d0ec541402c8ac6c22f6c5b"
 };
@@ -381,7 +395,7 @@ self.addEventListener("install", (event) => {
   return event.waitUntil(
     caches.open(TEMP).then((cache) => {
       return cache.addAll(
-        CORE.map((value) => new Request(value, {'cache': 'reload'})));
+        CORE.map((value) => new Request(value + '?revision=' + RESOURCES[value], {'cache': 'reload'})));
     })
   );
 });
