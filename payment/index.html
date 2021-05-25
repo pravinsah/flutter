@@ -196,6 +196,7 @@ const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const email = urlParams.get('email')
 document.getElementById('rzp-button1').onclick = function(e){
+	console.log(email);
     if(email){
         createOrder(email);
         e.preventDefault();
