@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Razor Pay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+
+/*--thank you pop starts here--*/
+.thank-you-pop{
+	width:100%;
+ 	padding:20px;
+	text-align:center;
+}
+.thank-you-pop img{
+	width:76px;
+	height:auto;
+	margin:0 auto;
+	display:block;
+	margin-bottom:25px;
+}
+
+.thank-you-pop h1{
+	font-size: 42px;
+    margin-bottom: 25px;
+	color:#5C5C5C;
+}
+.thank-you-pop p{
+	font-size: 20px;
+    margin-bottom: 27px;
+ 	color:#5C5C5C;
+}
+.thank-you-pop h3.cupon-pop{
+	font-size: 25px;
+    margin-bottom: 40px;
+	color:#222;
+	display:inline-block;
+	text-align:center;
+	padding:10px 20px;
+	border:2px dashed #222;
+	clear:both;
+	font-weight:normal;
+}
+.thank-you-pop h3.cupon-pop span{
+	color:#03A9F4;
+}
+.thank-you-pop a{
+	display: inline-block;
+    margin: 0 auto;
+    padding: 9px 20px;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 14px;
+    background-color: #8BC34A;
+    border-radius: 17px;
+}
+.thank-you-pop a i{
+	margin-right:5px;
+	color:#fff;
+}
+#ignismyModal .modal-header{
+    border:0px;
+}
+/*--thank you pop ends here--*/
+
+
+
+</style>
+
+
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="modal fade" id="ignismyModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label=""><span>×</span></button>
+                         </div>
+                          <div class="modal-body">
+                           
+                            <div class="thank-you-pop">
+                                <img src="https://res.cloudinary.com/pravinsah/image/upload/v1621442247/aranam_logo_caption_oyxywc.png" alt="">
+                                <h1 id='titleA'>Thank You!</h1>
+                                <p id='msgA'>Your payment is received and we will contact you soon</p>
+                                <h3 class="cupon-pop" id="razorpay_payment_id"></h3>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Model Popup ends-->
+
+    
+<button id="rzp-button1" class="btn btn-primary">Online Payment</button>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+
+
+var api = "/api/createRazorPayOrder";
+var currentRequest = null;   
+function createOrder(email){
+    currentRequest = $.ajax({
+      type: 'GET',
+      data: 'email=' + email,
+      url: api,
+      beforeSend : function()    {           
+          if(currentRequest != null){currentRequest.abort();}
+      },
+      success: function(data) {
+        var response = data.data;
+        executeRazorPay(response);
+      },
+      error:function(e){
+		  console.log(e);        
+      }
+})
+
+}
+
+
+function executeRazorPay(data){
+
+    var options = {
+        "key": data.key, // Enter the Key ID generated from the Dashboard
+        "amount":data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency":data.currency,
+        "name": "Arangam",
+        "description":data.description,
+        "image": "https://res.cloudinary.com/pravinsah/image/upload/v1621442247/aranam_logo_caption_oyxywc.png",
+        "order_id":data.order_id,
+        "handler": function (response){
+
+            $("#titleA").html("Thank You!");
+            $("#msgA").html("Your payment is received and we will contact you soon.");
+            $("#razorpay_payment_id").html("Your Payment Id: <span>"+response.razorpay_payment_id+"</span>");
+            $("#ignismyModal").modal("show");
+
+            var saveData = $.ajax({
+                type: "POST",
+                url: "/api/checkoutRazorPayStatus",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    'orderId': response.razorpay_order_id,
+                    'details': response.razorpay_payment_id+"|"+response.razorpay_signature
+                }),
+                success:function(result){
+   
+                },
+                error:function(err){
+
+                }
+            });
+        },
+        "prefill": {
+            "name": "",
+            "email": data.email,
+            "contact": data.contact
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+        alert(response.error.description);
+        /*$("#titleA").html("Payment Failed!");
+        $("#msgA").html(response.error.description);
+        $("#razorpay_payment_id").html("Error Code: <span>"+response.error.code+"</span>");
+        $("#ignismyModal").modal("show");*/
+        /*
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+        */
+    });
+    rzp1.open();
+
+}
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const email = urlParams.get('email')
+document.getElementById('rzp-button1').onclick = function(e){
+    if(email){
+        createOrder(email);
+        e.preventDefault();
+    }else{
+        alert("Invalid Data")
+    }    
+    //rzp1.open();
+}
+</script>
+</body>
+</html>
